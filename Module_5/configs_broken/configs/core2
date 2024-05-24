@@ -1,0 +1,56 @@
+! Startup-config last modified at Thu Apr 27 12:44:41 2023 by admin
+! device: core2 (cEOSLab, EOS-4.28.3M-28837868.4283M (engineering build))
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$QC3dpDaRNvsuGUHE$O5lEahVRpR8tFum0S1P6Cy7z5afOp.BG/.yigr4yjdjKkAK9gov24Z9FDnupEiTAeukYtAqvynT/RWpDfrMgZ/
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+hostname core2
+!
+spanning-tree mode mstp
+!
+management api http-commands
+   protocol http
+   no shutdown
+!
+management api gnmi
+   transport grpc default
+!
+management api netconf
+   transport ssh default
+!
+interface Ethernet1
+   no switchport
+   ip address 10.1.0.1/30
+   ip access-group 10 in
+!
+interface Ethernet2
+   no switchport
+   ip address 10.1.1.1/30
+!
+interface Ethernet3
+!
+interface Ethernet4
+!
+interface Management0
+   ip address 172.20.20.13/24
+   ipv6 address 2001:172:20:20::13/64
+!
+ip routing
+!
+access-list 10 deny tcp any any eq 179
+!
+ip route 0.0.0.0/0 11.78.3.193
+ip route 0.0.0.0/0 172.20.20.1
+!
+ipv6 route ::/0 2001:172:20:20::1
+!
+router ospf 1
+   network 10.0.0.0/8 area 0.0.0.0
+   max-lsa 12000
+!
+end

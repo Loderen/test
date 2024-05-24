@@ -1,0 +1,5 @@
+roles: []
+collections:
+  - name: https://github.com/netbox-community/ansible_modules.git
+    type: git
+    version: 5f497b5d0e5524529636eea68466bfbec203dd4b

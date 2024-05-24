@@ -1,0 +1,118 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Delivery pipeline</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.37.3">
+      <projectUrl>https://github.com/ACCOUNT/REPO/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>GIT_BRANCH_FROM_CI</name>
+          <description>Branch name from Integration pipeline</description>
+          <defaultValue>1</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@5.2.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://TOKEN@github.com/ACCOUNT/REPO.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>main</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="empty-list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>git checkout main
+git branch -u origin/main
+git merge ${GIT_BRANCH_FROM_CI}
+git push &quot;https://TOKEN@github.com/ACCOUNT/REPO.git&quot;</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo CREATE ENVIRONMENT
+python3 -m venv env
+. ./env/bin/activate
+env/bin/pip3 install -r ./requirements.txt</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo RESET LAB CONFIG
+. ./env/bin/activate
+ansible-playbook -i ./inventory/test.ini ./playbooks/0_0_reset_pb.yml</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo PHASE 0 ETHERNET1 CONFIGURATION
+. ./env/bin/activate
+ansible-playbook -i ./inventory/test.ini ./playbooks/0_1_leaf1_eth1.yml
+ansible-playbook -i ./inventory/test.ini ./playbooks/0_2_leaf2_eth1.yml</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo PHASE 1 LOOPBACK CONFIGURATION
+. ./env/bin/activate
+ansible-playbook -i ./inventory/test.ini ./playbooks/1_1_leaf_1_loop_0.yml
+ansible-playbook -i ./inventory/test.ini ./playbooks/1_2_leaf_2_loop_0.yml</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo PHASE 2 ALL OSPF CONFIGURATION
+. ./env/bin/activate
+ansible-playbook -i ./inventory/test.ini ./playbooks/2_1_ospf_base.yml</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo PHASE 3 EDGES BGP CONFIGURATION
+. ./env/bin/activate
+ansible-playbook -i ./inventory/test.ini ./playbooks/3_1_bgp_leaf_1.yml
+ansible-playbook -i ./inventory/test.ini ./playbooks/3_2_bgp_leaf_2.yml</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo PHASE 4 TEST CONFIGURATION</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo RESET CONFIG
+. ./env/bin/activate
+ansible-playbook -i ./inventory/test ./playbooks/0_0_reset_pb.yml</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo DESTROY ENVIRONMENT
+rm -rf ./env</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.45">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+      <disableDeferredWipeout>false</disableDeferredWipeout>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.26"/>
+  </buildWrappers>
+</project>

@@ -1,0 +1,9 @@
+Задания
+
+Ansible
+1) На устройствах Leaf1 и Leaf2 включить ip routing.
+2) Настроить IP адреса на смежных интерфейсах устройств (например, 10.0.10.1 и 10.0.10.2/30), на Leaf1 и Leaf2 создать Loopback 0 интерфейсы с адресами 10.0.100.1/32 и 10.0.200.1/32. (подсказка - arista.eos.eos_l3_interface)
+3) Настроить OSPFv2 на всех интерфейсах. (подсказка - arista.eos.eos_ospfv2)
+4) Поднять IBGP AS 65000 соседство между Loopback интерфейсами Leaf1 и Leaf2. (подсказка - arista.eos.eos_bgp_global)
+
+https://docs.ansible.com/ansible/latest/collections/arista/eos

@@ -1,0 +1,13 @@
+---
+- name: Demo connection
+  hosts: devices
+  gather_facts: false
+
+  tasks:
+    - name: Gather facts (eos)
+      arista.eos.eos_facts:
+      when: ansible_network_os == 'arista.eos.eos'
+
+    - name: Facts from all nodes node
+      ansible.builtin.debug:
+        msg: The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}

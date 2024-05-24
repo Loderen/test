@@ -1,0 +1,20 @@
+plugin: netbox.netbox.nb_inventory
+api_endpoint: "http://localhost:8000"
+token: "0123456789abcdef0123456789abcdef01234567"
+validate_certs: false
+config_context: false
+
+ansible_user: admin
+ansible_password: admin
+ansible_become: yes
+ansible_become_method: enable
+ansible_network_os: arista.eos.eos
+ansible_connection: ansible.netcommon.network_cli
+
+group_by:
+ - device_roles
+compose:
+  ansible_network_os: platform.slug
+query_filters:
+ - has_primary_ip: True
+ 

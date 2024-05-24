@@ -1,0 +1,10 @@
+---
+- name: Reset All to Base Config
+  hosts: devices
+  gather_facts: false
+
+  tasks:
+    - name: Reset to Base
+      arista.eos.eos_config:
+        lines:
+          - configure replace startup-config

@@ -1,0 +1,21 @@
+---
+- name: Add devices to NetBox
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_httpapi_use_ssl: false
+    ansible_httpapi_validate_certs: false
+
+  tasks:   
+    - name: Configure devices
+      netbox.netbox.netbox_device:
+        netbox_url: "http://localhost:8000"
+        netbox_token: "0123456789abcdef0123456789abcdef01234567"
+        data:
+          name: "{{ item }}"
+          device_type: "EOS_Switch"
+          site: "HQ"
+          device_role: "Leaf_Switch"
+          tenant: "Main"
+          primary_ip4: "{{ hostvars[item].ansible_host }}/32"
+      loop: "{{ groups['leaf'] }}"

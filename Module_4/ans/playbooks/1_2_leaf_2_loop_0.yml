@@ -1,0 +1,12 @@
+---
+- name: Leaf2 IP configuration
+  hosts: leaf2
+  gather_facts: false
+
+  tasks:
+    - name: Leaf2 loopback 0 interface
+      arista.eos.eos_l3_interfaces:
+        config:
+          - name: Loopback0
+            ipv4:
+              - address: 10.0.200.1/32

@@ -1,0 +1,7 @@
+---
+- name: Send show ip arp command to Arista device using nb_inventory
+  hosts: device_roles_leaf_switch
+  gather_facts: false
+
+  tasks:
+    - debug: msg="{{ ansible_host }} {{ primary_ip4 }}"

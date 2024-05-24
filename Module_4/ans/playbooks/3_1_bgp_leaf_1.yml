@@ -1,0 +1,15 @@
+---
+- name: Leaf1 BGP Configuration
+  hosts: leaf1
+  gather_facts: false
+
+  tasks:
+    - name: Leaf1 BGP
+      arista.eos.eos_bgp_global:
+        config:
+          as_number: "65000"
+          neighbor:
+            - peer: 10.0.200.1
+              next_hop_self: "yes"
+              remote_as: "65000"
+              update_source: Loopback0

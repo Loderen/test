@@ -1,0 +1,16 @@
+- name: Network agnostic command execution
+  hosts: leaf1
+  gather_facts: false
+  connection: ansible.netcommon.network_cli
+
+  tasks:
+    - name: Run cli_command on Arista and display results
+      block:
+      - name: Run cli_command on Arista
+        ansible.netcommon.cli_command:
+          command: show ip int br
+        register: output
+
+      - name: Display result to terminal window
+        debug: msg="{{ output.stdout_lines }}"
+      when: ansible_network_os == 'arista.eos.eos'

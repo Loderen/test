@@ -1,0 +1,39 @@
+---
+- name: Create NetBox device interfaces
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_httpapi_use_ssl: false
+    ansible_httpapi_validate_certs: false
+
+  tasks:
+    - name: Create Ethernet1 interface
+      netbox.netbox.netbox_device_interface:
+        netbox_url: "http://localhost:8000"
+        netbox_token: "0123456789abcdef0123456789abcdef01234567"
+        data:
+          device: "{{ item }}"
+          name: Ethernet1
+          type: "1000BASE-T (1GE)"        
+      loop: "{{ groups['leaf'] }}"
+
+    - name: Create Loopback0 interface
+      netbox.netbox.netbox_device_interface:
+        netbox_url: "http://localhost:8000"
+        netbox_token: "0123456789abcdef0123456789abcdef01234567"
+        data:
+          device: "{{ item }}"
+          name: Loopback0
+          type: Virtual
+      loop: "{{ groups['leaf'] }}"
+
+    - name: Create Management0 interface
+      netbox.netbox.netbox_device_interface:
+        netbox_url: "http://localhost:8000"
+        netbox_token: "0123456789abcdef0123456789abcdef01234567"
+        data:
+          device: "{{ item }}"
+          name: Management0
+          mgmt_only: true
+          type: "1000BASE-T (1GE)"        
+      loop: "{{ groups['leaf'] }}"

@@ -1,0 +1,25 @@
+all:
+  vars:
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: arista.eos.eos
+    ansible_user: admin
+    ansible_password: admin
+
+leaf:
+  hosts:
+    leaf1:
+      ansible_host: 172.20.20.11
+      eth1_ip: 10.0.10.1/30
+      lo0_ip: 10.0.100.1/32
+      bgp_peer_ip: 10.0.200.1
+    leaf2:
+      ansible_host: 172.20.20.12
+      eth1_ip: 10.0.10.2/30
+      lo0_ip: 10.0.200.1/32
+      bgp_peer_ip: 10.0.100.1
+
+devices:
+  children:
+    leaf:

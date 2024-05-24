@@ -1,0 +1,31 @@
+---
+- name: Fact gathering
+  hosts: devices
+  gather_facts: false
+
+  tasks:
+    - name: Gather facts (eos)
+      arista.eos.eos_facts:
+      when: ansible_network_os == 'arista.eos.eos'
+
+    - name: Facts from all nodes node
+      debug:
+        msg: The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}
+
+    - name: Backup config (eos)
+      arista.eos.eos_config:
+        backup: true
+      register: backup_eos_location
+      when: ansible_network_os == 'arista.eos.eos'
+
+    - name: Create backup dir
+      file:
+        path: ./backups/{{ inventory_hostname }}
+        state: directory
+        recurse: true
+
+    - name: Copy files into ./backups/
+      copy:
+        src: "{{ backup_eos_location.backup_path }}"
+        dest: ./backups/{{ inventory_hostname }}/{{ inventory_hostname }}.cfg
+      when: ansible_network_os == 'arista.eos.eos'

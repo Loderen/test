@@ -1,0 +1,47 @@
+---
+- name: Create NetBox interfaces ip addresses
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_httpapi_use_ssl: false
+    ansible_httpapi_validate_certs: false
+
+  tasks:
+    - name: Ethernet1 IP  
+      netbox.netbox.netbox_ip_address:
+        netbox_url: "http://localhost:8000"
+        netbox_token: "0123456789abcdef0123456789abcdef01234567"
+        data:
+          address: "{{ hostvars[item].eth1_ip }}"
+          assigned_object:
+            device: "{{ item }}"
+            name: Ethernet1
+          status: Active
+        state: present
+      loop: "{{ groups['leaf'] }}"
+
+    - name: Loopback IP  
+      netbox.netbox.netbox_ip_address:
+        netbox_url: "http://localhost:8000"
+        netbox_token: "0123456789abcdef0123456789abcdef01234567"
+        data:
+          address: "{{ hostvars[item].lo0_ip }}"
+          assigned_object:
+            device: "{{ item }}"
+            name: Loopback0
+          status: Active
+        state: present
+      loop: "{{ groups['leaf'] }}"
+
+    - name: Management0 IP  
+      netbox.netbox.netbox_ip_address:
+        netbox_url: "http://localhost:8000"
+        netbox_token: "0123456789abcdef0123456789abcdef01234567"
+        data:
+          address: "{{ hostvars[item].ansible_host }}"
+          assigned_object:
+            device: "{{ item }}"
+            name: Management0
+          status: Active         
+        state: present
+      loop: "{{ groups['leaf'] }}"

@@ -1,0 +1,48 @@
+---
+# tasks file for Underlay
+- name: Enable IPv4 routing
+  arista.eos.eos_config:
+    lines:
+      - ip routing
+
+- name: No switchport
+  arista.eos.eos_interfaces:
+    config:
+      - name: Ethernet1
+        description: Configured by Ansible
+        mode: layer3
+    state: merged
+        
+- name: IP config
+  arista.eos.eos_l3_interfaces:
+    config:
+      - name: Ethernet1
+        ipv4:
+        - address: "{{ eth1_ip }}/30"
+    state: replaced
+
+- name: Leaf loopback0 interfaces
+  arista.eos.eos_l3_interfaces:
+    config:
+      - name: Loopback0
+        ipv4:
+        - address: "{{ lo0_ip }}/32"
+
+- name: OSPF config
+  arista.eos.eos_ospfv2:
+    config:
+      processes:
+        - process_id: 1
+          networks:
+            - area: 0.0.0.0
+              prefix: 10.0.0.0/16
+
+- name: Leaf BGP
+  arista.eos.eos_bgp_global:
+    config:
+      as_number: "65000"
+      neighbor:
+        - peer: "{{ bgp_peer_ip }}"
+          next_hop_self: "yes"
+          remote_as: "65000"
+          update_source: Loopback0

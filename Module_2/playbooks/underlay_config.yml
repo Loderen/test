@@ -1,0 +1,5 @@
+- name: Underlay configuration
+  hosts: devices
+  gather_facts: false
+  roles:
+    - Underlay

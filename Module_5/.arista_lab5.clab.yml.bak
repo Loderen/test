@@ -1,0 +1,30 @@
+name: module5_lab1
+
+topology:
+  nodes:
+    spine1:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.11
+      mgmt-ipv6: 2001:172:20:20::11
+    spine2:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.12
+      mgmt-ipv6: 2001:172:20:20::12
+    leaf1:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.13
+      mgmt-ipv6: 2001:172:20:20::13
+    leaf2:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.14
+      mgmt-ipv6: 2001:172:20:20::14
+
+  links:
+    - endpoints: ["leaf1:eth1", "spine1:eth1"]
+    - endpoints: ["leaf1:eth2", "spine2:eth1"]
+    - endpoints: ["leaf2:eth1", "spine1:eth2"]
+    - endpoints: ["leaf2:eth2", "spine2:eth2"]   

@@ -1,0 +1,70 @@
+! Startup-config last modified at Thu Apr 27 12:42:55 2023 by admin
+! device: edge1 (cEOSLab, EOS-4.28.3M-28837868.4283M (engineering build))
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$RVFCXMrm4mO0rYUD$ClNh.pgUTK0z57ACplbDLO3qfTm8SxWuGnKPRYpGb4cggGNUC25EZRwYhpFHZJB9kmLBXE.KG/ioYSn2iR3I8/
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+hostname edge1
+!
+spanning-tree mode mstp
+!
+management api http-commands
+   protocol http
+   no shutdown
+!
+management api gnmi
+   transport grpc default
+!
+management api netconf
+   transport ssh default
+!
+interface Ethernet1
+   no switchport
+   ip address 10.0.0.2/30
+!
+interface Ethernet2
+   no switchport
+   ip address 10.1.0.2/30
+!
+interface Ethernet3
+!
+interface Ethernet4
+!
+interface Loopback0
+   ip address 10.0.100.1/32
+!
+interface Loopback100
+   ip address 11.0.0.1/32
+!
+interface Management0
+   ip address 172.20.20.11/24
+   ipv6 address 2001:172:20:20::11/64
+!
+ip access-list DENY_ICMP_HTTP
+   10 permit icmp any any
+   20 permit tcp any any eq www
+!
+ip routing
+!
+ip route 0.0.0.0/0 11.78.3.193
+ip route 0.0.0.0/0 172.20.20.1
+!
+ipv6 route ::/0 2001:172:20:20::1
+!
+router bgp 65000
+   neighbor 10.0.200.1 remote-as 65000
+   neighbor 10.0.200.1 next-hop-self
+   neighbor 10.0.200.1 update-source Loopback0
+   network 11.0.0.1/32
+!
+router ospf 1
+   network 10.0.0.0/8 area 0.0.0.0
+   router-id 1.1.1.1
+   max-lsa 12000
+!
+end

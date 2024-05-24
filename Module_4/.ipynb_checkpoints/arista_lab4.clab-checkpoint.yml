@@ -1,0 +1,28 @@
+name: module4_lab1
+
+topology:
+  nodes:
+    leaf1-test:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.11
+      mgmt-ipv6: 2001:172:20:20::11
+    leaf2-test:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.12
+      mgmt-ipv6: 2001:172:20:20::12
+    leaf1-prod:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.13
+      mgmt-ipv6: 2001:172:20:20::13
+    leaf2-prod:
+      kind: ceos
+      image: ceos:4.28.3M
+      mgmt-ipv4: 172.20.20.14
+      mgmt-ipv6: 2001:172:20:20::14
+
+  links:
+    - endpoints: ["leaf1-test:eth1", "leaf2-test:eth1"]
+    - endpoints: ["leaf1-prod:eth1", "leaf2-prod:eth1"]   

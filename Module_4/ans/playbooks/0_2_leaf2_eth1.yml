@@ -1,0 +1,20 @@
+---
+- name: Leaf2 IP configuration
+  hosts: leaf2
+  gather_facts: false
+
+  tasks:
+    - name: No switchport
+      arista.eos.eos_interfaces:
+        config:
+          - name: Ethernet1
+            description: Configured by Ansible
+            mode: layer3
+        state: merged
+
+    - name: Leaf2 Ethernet1 interface
+      arista.eos.eos_l3_interfaces:
+        config:
+          - name: Ethernet1
+            ipv4:
+              - address: 10.0.10.2/30

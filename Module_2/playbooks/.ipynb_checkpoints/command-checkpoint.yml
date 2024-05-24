@@ -1,0 +1,12 @@
+- name: Command execution
+  hosts: leaf1
+  gather_facts: no
+  
+  tasks:
+    - name: Arista command
+      arista.eos.eos_command:
+        commands: show ip int br
+      when: ansible_network_os == 'arista.eos.eos'
+      register: output
+      
+    - debug: msg="{{ output.stdout_lines }}"

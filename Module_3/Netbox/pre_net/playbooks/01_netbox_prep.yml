@@ -1,0 +1,51 @@
+---
+- name: Create NetBox site, device type, and device role
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_httpapi_use_ssl: false
+    ansible_httpapi_validate_certs: false
+    netbox_url: "http://localhost:8000"
+    netbox_token: "0123456789abcdef0123456789abcdef01234567"
+
+  tasks:
+    - name: Create NetBox tenant
+      netbox.netbox.netbox_tenant:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "Main"
+          slug: "main"
+    
+    - name: Create NetBox site
+      netbox.netbox.netbox_site:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "HQ"
+          tenant: "Main"
+
+    - name: Create NetBox manufacturer
+      netbox.netbox.netbox_manufacturer:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "Arista"
+
+    - name: Create NetBox device type
+      netbox.netbox.netbox_device_type:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          manufacturer: "Arista"
+          model: "EOS_Switch"
+          slug: "eos_switch"
+
+    - name: Create NetBox device role
+      netbox.netbox.netbox_device_role:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          name: "Leaf_Switch"
+          slug: "leaf_switch"
+
